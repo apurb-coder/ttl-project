@@ -1,11 +1,13 @@
 import React,{useState} from 'react'
 import { useNavigate } from 'react-router-dom';
-import { IoSend } from "react-icons/io5";
 
 const Home:React.FC = () => {
   const navigate =  useNavigate()
   const [fileName, setfileName] = useState("")
-  const handleUpload = () =>{
+  const handleUpload = (e:React.ChangeEvent) =>{
+    const formData = new FormData()
+    console.log(e.target.files);
+    
     navigate("/result")
   }
   return (
@@ -20,12 +22,16 @@ const Home:React.FC = () => {
             name="input"
             id="input"
             className="w-full py-2 px-4 outline-none rounded-lg"
-            
             disabled
             value={fileName}
           />
           <div className="mt-10 bg-gradient-to-r from-orange-500 to-orange-800 py-2 px-5 rounded-md">
-            <input type="file" name="csvFile" id="csvFile" />
+            <input
+              type="file"
+              name="csvFile"
+              id="csvFile"
+              onChange={handleUpload}
+            />
           </div>
         </div>
         {/* <button
