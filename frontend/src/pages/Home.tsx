@@ -1,37 +1,48 @@
 import React,{useState} from 'react'
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const Home:React.FC = () => {
   const navigate =  useNavigate()
   const [fileName, setfileName] = useState("")
-  const handleUpload = (e:React.ChangeEvent) =>{
-    const formData = new FormData()
-    console.log(e.target.files);
-    
-    navigate("/result")
-  }
+  const handleUpload = async(e: React.ChangeEvent<HTMLInputElement>) => {
+    const formData = new FormData();
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      const formData = new FormData();
+      formData.append("content", file);
+
+      try {
+        const response = await axios.post("http://127.0.0.1:8000/review", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        console.log(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    navigate("/result");
+  };
   return (
     <div className="flex justify-center items-center h-screen">
       <div className="flex flex-col justify-center items-center">
         <span className="text-center font-bold bg-gradient-to-r from-orange-500 to-orange-800 bg-clip-text text-transparent text-5xl tracking-wide">
           Credit Card Fraud Detection System
         </span>
-        <div className="flex flex-col items-center justify-center w-[20rem] h-[3rem] mt-36">
+        <div className="flex flex-col justify-center mt-16">
           <input
             type="text"
             name="input"
             id="input"
-            className="w-full py-2 px-4 outline-none rounded-lg"
-            disabled
-            value={fileName}
+            className="rounded-lg w-[30rem] h-[3rem] p-5 outline-none"
           />
-          <div className="mt-10 bg-gradient-to-r from-orange-500 to-orange-800 py-2 px-5 rounded-md">
-            <input
-              type="file"
-              name="csvFile"
-              id="csvFile"
-              onChange={handleUpload}
-            />
+          <div className="flex justify-center mt-16">
+            <button className="bg-gradient-to-r from-orange-500 to-orange-800 rounded-lg px-5 py-2">
+              Submit
+            </button>
           </div>
         </div>
         {/* <button
