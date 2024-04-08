@@ -1,27 +1,20 @@
-import React,{useState} from 'react'
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import React,{useState} from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useOutput } from "../context/OutputContext.tsx";
 
-const Home:React.FC = () => {
-  const navigate =  useNavigate()
-  const [fileName, setfileName] = useState("")
-  const handleUpload = async(e: React.ChangeEvent<HTMLInputElement>) => {
-    const formData = new FormData();
-    if (e.target.files && e.target.files.length > 0) {
-      const file = e.target.files[0];
-      const formData = new FormData();
-      formData.append("content", file);
-
-      try {
-        const response = await axios.post("http://127.0.0.1:8000/review", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
-        console.log(response.data);
-      } catch (error) {
-        console.error(error);
-      }
+const Home: React.FC = () => {
+  const navigate = useNavigate();
+  const [input, setInput] = useState("")
+  const outputContext = useOutput();
+  const handleUpload = async () => {
+    try {
+      const response = await axios.post("http://127.0.0.1:8000/review", {
+        data: input,
+      });
+      outputContext?.setData(response.data);
+    } catch (error) {
+      console.error(error);
     }
 
     navigate("/result");
@@ -37,10 +30,14 @@ const Home:React.FC = () => {
             type="text"
             name="input"
             id="input"
+            onChange={(e) => setInput(e.target.value)}
             className="rounded-lg w-[30rem] h-[3rem] p-5 outline-none"
           />
           <div className="flex justify-center mt-16">
-            <button className="bg-gradient-to-r from-orange-500 to-orange-800 rounded-lg px-5 py-2">
+            <button
+              className="bg-gradient-to-r from-orange-500 to-orange-800 rounded-lg px-5 py-2"
+              onClick={handleUpload}
+            >
               Submit
             </button>
           </div>
@@ -54,6 +51,6 @@ const Home:React.FC = () => {
       </div>
     </div>
   );
-}
+};
 
-export default Home
+export default Home;
